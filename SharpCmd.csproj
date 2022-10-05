@@ -45,11 +45,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConcreteCommand\FileOperation\type.cs" />
+    <Compile Include="ConcreteCommand\ModuleType.cs" />
+    <Compile Include="ConcreteCommand\Misc\exit.cs" />
+    <Compile Include="ConcreteCommand\Recon\arp.cs" />
+    <Compile Include="ConcreteCommand\Recon\ipconfig.cs" />
+    <Compile Include="ConcreteCommand\Recon\ping.cs" />
+    <Compile Include="ConcreteCommand\Recon\quser.cs" />
+    <Compile Include="ConcreteCommand\Recon\systeminfo.cs" />
+    <Compile Include="ConcreteCommand\Recon\whoami.cs" />
+    <Compile Include="Contract\Command.cs" />
+    <Compile Include="Contract\CommandWrapper.cs" />
+    <Compile Include="Contract\IContract.cs" />
+    <Compile Include="Lib\ArgsParser\ArgumentParser.cs" />
+    <Compile Include="Lib\ArgsParser\ArgumentParserResult.cs" />
+    <Compile Include="Lib\DelegatesDefinition.cs" />
+    <Compile Include="Lib\Help\Constant.cs" />
+    <Compile Include="Lib\MiniDInvoke.cs" />
+    <Compile Include="Lib\Native\kernel32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharpCmd.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Contract\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
