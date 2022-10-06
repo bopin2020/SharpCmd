@@ -11,6 +11,10 @@ namespace SharpCmd.ConcreteCommand.Recon
     {
         public string CommandName => "systeminfo";
 
+        /// <summary>
+        /// https://github.com/tlewiscpp/SystemInfo/blob/master/src/osinfo.cpp
+        /// </summary>
+        /// <param name="arguments"></param>
         public void Execute(Dictionary<string, string> arguments)
         {
             systeminfoModel systeminfoModel = new systeminfoModel();
@@ -18,6 +22,8 @@ namespace SharpCmd.ConcreteCommand.Recon
             systeminfoModel.WinOSName = "Microsoft Windows 11 专业版";
             systeminfoModel.WinOSVersion = "10.0.22000 暂缺 Build 22000";
             systeminfoModel.WinOSManufacture = "Microsoft Corporation";
+
+
             Console.WriteLine("\n\n");
             foreach (var item in systeminfoModel.GetType().GetProperties())
             {

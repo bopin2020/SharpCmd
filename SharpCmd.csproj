@@ -45,11 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConcreteCommand\FileOperation\cd.cs" />
+    <Compile Include="ConcreteCommand\FileOperation\dir.cs" />
+    <Compile Include="ConcreteCommand\FileOperation\pwd.cs" />
     <Compile Include="ConcreteCommand\FileOperation\type.cs" />
+    <Compile Include="ConcreteCommand\Misc\cls.cs" />
     <Compile Include="ConcreteCommand\ModuleType.cs" />
     <Compile Include="ConcreteCommand\Misc\exit.cs" />
     <Compile Include="ConcreteCommand\Recon\arp.cs" />
     <Compile Include="ConcreteCommand\Recon\ipconfig.cs" />
+    <Compile Include="ConcreteCommand\Recon\net.cs" />
     <Compile Include="ConcreteCommand\Recon\ping.cs" />
     <Compile Include="ConcreteCommand\Recon\quser.cs" />
     <Compile Include="ConcreteCommand\Recon\systeminfo.cs" />
@@ -60,9 +65,13 @@
     <Compile Include="Lib\ArgsParser\ArgumentParser.cs" />
     <Compile Include="Lib\ArgsParser\ArgumentParserResult.cs" />
     <Compile Include="Lib\DelegatesDefinition.cs" />
+    <Compile Include="Lib\Help\Common.cs" />
     <Compile Include="Lib\Help\Constant.cs" />
     <Compile Include="Lib\MiniDInvoke.cs" />
+    <Compile Include="Lib\Native\advapi32.cs" />
     <Compile Include="Lib\Native\kernel32.cs" />
+    <Compile Include="Lib\Native\netapi32.cs" />
+    <Compile Include="Lib\Native\secur32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharpCmd.cs" />

@@ -38,9 +38,11 @@ namespace SharpCmd
             {
                 this.command.Register(item);
             }
+#if Sys
             StringBuilder sb = new StringBuilder(256);
             kernel32.GetSystemDirectory(sb,256);
             Directory.SetCurrentDirectory(sb.ToString());
+#endif
             while (true)
             {
                 Console.Write(Directory.GetCurrentDirectory() + Constant.SpecialChar);

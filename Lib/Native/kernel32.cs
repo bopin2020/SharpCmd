@@ -10,5 +10,14 @@ namespace SharpCmd.Lib.Native
     {
         [DllImport("kernel32.dll")]
         public static extern uint GetSystemDirectory([Out] StringBuilder lpBuffer,uint uSize);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern bool FreeConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr GetCurrentThread();
     }
 }
