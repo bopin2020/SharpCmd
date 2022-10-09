@@ -45,9 +45,17 @@ namespace SharpCmd
 #endif
             while (true)
             {
-                Console.Write(Directory.GetCurrentDirectory() + Constant.SpecialChar);
+                Console.Write(Environment.UserName + (Common.IsHighIntegrity() ? "#> " : "$> ") + Directory.GetCurrentDirectory() + Constant.SpecialChar);
                 var result = ArgumentParser.Parse(Console.ReadLine().Split());
-                this.command.Notify(result.Arguments);
+                try
+                {
+                    this.command.Notify(result.Arguments);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine("[Error]\t" + ex.Message);
+                    Console.Error.WriteLine(ex.StackTrace);
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -88,6 +89,39 @@ namespace SharpCmd.Lib.Native
             /// specified in the lpServer parameter and remote calls are not allowed for this process.
             /// </summary>
             RPC_E_REMOTE_DISABLED = 2147549468 // 0x8001011C
+        }
+
+
+        /*
+         https://stackoverflow.com/questions/926227/how-to-detect-if-machine-is-joined-to-domain
+         */
+        [DllImport("Netapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern int NetGetJoinInformation(string server, out IntPtr domain, out NetJoinStatus status);
+
+        public enum NetJoinStatus
+        {
+            NetSetupUnknownStatus = 0,
+            NetSetupUnjoined,
+            NetSetupWorkgroupName,
+            NetSetupDomainName
+        }
+        public static bool IsInDomain()
+        {
+            NetJoinStatus status = NetJoinStatus.NetSetupUnknownStatus;
+            IntPtr pDomain = IntPtr.Zero;
+            int result = NetGetJoinInformation(null, out pDomain, out status);
+            if (pDomain != IntPtr.Zero)
+            {
+                NetApiBufferFree(pDomain);
+            }
+            if (result == 0)
+            {
+                return status == NetJoinStatus.NetSetupDomainName;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
