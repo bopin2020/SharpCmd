@@ -22,22 +22,24 @@ namespace SharpCmd.Lib.ArgsParser
                         continue;
                     }
 
-                    var idx = argument.IndexOf(':');
+                    //var idx = argument.IndexOf(':');
+                    //if (idx > 0)
+                    //{
+                    //    arguments[argument.Substring(0, idx)] = argument.Substring(idx + 1);
+                    //}
+                    //else
+                    //{
+
+                    //}
+
+                    var idx = argument.IndexOf('=');
                     if (idx > 0)
                     {
                         arguments[argument.Substring(0, idx)] = argument.Substring(idx + 1);
                     }
                     else
                     {
-                        idx = argument.IndexOf('=');
-                        if (idx > 0)
-                        {
-                            arguments[argument.Substring(0, idx)] = argument.Substring(idx + 1);
-                        }
-                        else
-                        {
-                            arguments[argument] = string.Empty;
-                        }
+                        arguments[argument] = string.Empty;
                     }
                 }
 

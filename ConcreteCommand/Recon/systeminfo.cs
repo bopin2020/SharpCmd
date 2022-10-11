@@ -308,12 +308,7 @@ namespace SharpCmd.ConcreteCommand.Recon
         {
             StringBuilder data = new StringBuilder(500);
             int result;
-
-            // Try GetLocaleInfoEx
-            // LOCALE_NAME_SYSTEM_DEFAULT = "!x-sys-default-locale"
-            // en-US
             result = GetLocaleInfoEx("!x-sys-default-locale", LCTYPE.LOCALE_SENGLISHDISPLAYNAME, data, 500);
-            Console.WriteLine(data);
             return data.ToString();
         }
 
@@ -321,10 +316,7 @@ namespace SharpCmd.ConcreteCommand.Recon
         {
             StringBuilder data = new StringBuilder(500);
             int result;
-
-            // Try GetLocaleInfoEx
             result = GetLocaleInfoEx("!x-sys-default-locale", LCTYPE.LOCALE_SENGLISHDISPLAYNAME, data, 500);
-            Console.WriteLine(data);
             return data.ToString();
         }
 
