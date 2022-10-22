@@ -17,14 +17,18 @@ namespace SharpCmd.Lib
         enum SupportVersion
         {
             NET35,
-            NET40
+            NET40,
+            DOTNET
         }
-        private static SupportVersion supportVersion = SupportVersion.NET35;
+        private static SupportVersion supportVersion = SupportVersion.DOTNET;
         private static BindingFlags bindingFlags = SetBindingFlags();
         private static string typeFullName = SetTypeFullName();
         private static Assembly assembly = supportVersion == SupportVersion.NET40
                                                         ? Assembly.GetAssembly(typeof(Object)) :
-                                                        AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name == "System").FirstOrDefault();
+                                                        (
+            AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name.StartsWith("System")).FirstOrDefault());
+
+
         private static Type type;
 
         private static MethodInfo _GetModuleHandle;
@@ -63,6 +67,9 @@ namespace SharpCmd.Lib
                 case SupportVersion.NET40:
                     typeFullName = "Microsoft.Win32.Win32Native";
                     break;
+                case SupportVersion.DOTNET:
+                    typeFullName = "System.Runtime.InteropServices";
+                    break;
                 default:
                     break;
             }
@@ -77,25 +84,51 @@ namespace SharpCmd.Lib
         {
             return Entry(() =>
             {
+#if DOTNET
+                if(NativeLibrary.TryLoad(dllname,out IntPtr handle))
+                {
+                    return handle;
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+                
+#else
                 if (type == null)
                     type = assembly.GetType(typeFullName);
                 if (_GetModuleHandle == null)
                     _GetModuleHandle = type.GetMethod("GetModuleHandle", BindingFlags.Static | bindingFlags);
                 return (IntPtr)_GetModuleHandle.Invoke(null, new object[] { dllname });
+#endif
             },
             throwException
             );
         }
 
+
+
         public static IntPtr GetProcAddress(IntPtr dll, string functionname, bool throwException = false)
         {
             return Entry(() =>
             {
+#if DOTNET
+                if(NativeLibrary.TryGetExport(dll,functionname,out IntPtr address))
+                {
+                    return address;
+                }
+                else
+                {
+                    throw new Exception();
+                }
+#else
                 if (type == null)
                     type = assembly.GetType(typeFullName);
                 if (_GetProcAddress == null)
                     _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags);
                 return (IntPtr)_GetProcAddress.Invoke(null, new object[] { dll, functionname });
+#endif
             },
             throwException
             );
@@ -149,6 +182,6 @@ namespace SharpCmd.Lib
         {
             return Marshal.GetDelegateForFunctionPointer(address, typeof(T)) as T;
         }
-        #endregion
+#endregion
     }
 }
