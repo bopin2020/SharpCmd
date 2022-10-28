@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpCmd.Lib.Delegates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +20,13 @@ namespace SharpCmd.Lib
             NET35,
             NET40
         }
+#if NET35
         private static SupportVersion supportVersion = SupportVersion.NET35;
+
+#else
+        private static SupportVersion supportVersion = SupportVersion.NET40;
+#endif
+
         private static BindingFlags bindingFlags = SetBindingFlags();
         private static string typeFullName = SetTypeFullName();
         private static Assembly assembly = supportVersion == SupportVersion.NET40
@@ -30,13 +37,13 @@ namespace SharpCmd.Lib
         private static MethodInfo _GetModuleHandle;
         private static MethodInfo _GetProcAddress;
 
-        #endregion
+#endregion
 
 
         public static Exception LastException { get; private set; }
 
 
-        #region Private Static Methods
+#region Private Static Methods
         private static BindingFlags SetBindingFlags()
         {
             switch (supportVersion)
@@ -68,10 +75,10 @@ namespace SharpCmd.Lib
             }
             return typeFullName;
         }
-        #endregion
+#endregion
 
 
-        #region Public Static Methods
+#region Public Static Methods
 
         public static IntPtr GetModuleHandle(string dllname, bool throwException = false)
         {
@@ -81,7 +88,13 @@ namespace SharpCmd.Lib
                     type = assembly.GetType(typeFullName);
                 if (_GetModuleHandle == null)
                     _GetModuleHandle = type.GetMethod("GetModuleHandle", BindingFlags.Static | bindingFlags);
-                return (IntPtr)_GetModuleHandle.Invoke(null, new object[] { dllname });
+                IntPtr module = (IntPtr)_GetModuleHandle.Invoke(null, new object[] { dllname });
+                // try loadlibrary dll module
+                if(module == IntPtr.Zero)
+                {
+                    module = kernel32.LoadLibrary(dllname);
+                }
+                return module;
             },
             throwException
             );
@@ -142,6 +155,10 @@ namespace SharpCmd.Lib
         public static T GetFunctionPointer<T>(string dllname, string functionname, bool throwException = false) where T : Delegate
         {
             IntPtr address = GetProcAddress(dllname, functionname, throwException);
+            if(address == IntPtr.Zero)
+            {
+                throw new Exception("0x00000000 Invalid address");
+            }
             return GetFunctionPointer<T>(address);
         }
 
@@ -149,6 +166,6 @@ namespace SharpCmd.Lib
         {
             return Marshal.GetDelegateForFunctionPointer(address, typeof(T)) as T;
         }
-        #endregion
+#endregion
     }
 }

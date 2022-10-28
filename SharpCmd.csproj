@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SharpCmd</RootNamespace>
     <AssemblyName>SharpCmd</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworks>net35;</TargetFrameworks>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -27,6 +27,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,7 +35,6 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET40;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -46,6 +46,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net35'">
+    <DefineConstants>NET35;MiniDInvoke;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net40'">
+    <DefineConstants>NET40;MiniDInvoke;</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
   </ItemGroup>
@@ -63,13 +69,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcreteCommand\FileOperation\cd.cs" />
+    <Compile Include="ConcreteCommand\FileOperation\copy.cs" />
+    <Compile Include="ConcreteCommand\FileOperation\del.cs" />
     <Compile Include="ConcreteCommand\FileOperation\dir.cs" />
     <Compile Include="ConcreteCommand\FileOperation\pwd.cs" />
     <Compile Include="ConcreteCommand\FileOperation\type.cs" />
     <Compile Include="ConcreteCommand\Misc\cls.cs" />
+    <Compile Include="ConcreteCommand\Misc\ver.cs" />
+    <Compile Include="ConcreteCommand\Misc\test.cs" />
     <Compile Include="ConcreteCommand\ModuleType.cs" />
     <Compile Include="ConcreteCommand\Misc\exit.cs" />
     <Compile Include="ConcreteCommand\Recon\arp.cs" />
+    <Compile Include="ConcreteCommand\Recon\hostname.cs" />
     <Compile Include="ConcreteCommand\Recon\ipconfig.cs" />
     <Compile Include="ConcreteCommand\Recon\net.cs" />
     <Compile Include="ConcreteCommand\Recon\ping.cs" />
@@ -82,7 +93,12 @@
     <Compile Include="Contract\IContract.cs" />
     <Compile Include="Lib\ArgsParser\ArgumentParser.cs" />
     <Compile Include="Lib\ArgsParser\ArgumentParserResult.cs" />
-    <Compile Include="Lib\DelegatesDefinition.cs" />
+    <Compile Include="Lib\Delegates\secur32.cs" />
+    <Compile Include="Lib\Delegates\netapi32.cs" />
+    <Compile Include="Lib\Delegates\kernel32.cs" />
+    <Compile Include="Lib\Delegates\ntdll.cs" />
+    <Compile Include="Lib\Delegates\advapi32.cs" />
+    <Compile Include="Lib\ExceptionCollection\CollectionEmpty.cs" />
     <Compile Include="Lib\Help\Common.cs" />
     <Compile Include="Lib\Help\Constant.cs" />
     <Compile Include="Lib\Help\QueryRegInfo.cs" />
@@ -90,6 +106,7 @@
     <Compile Include="Lib\Native\advapi32.cs" />
     <Compile Include="Lib\Native\kernel32.cs" />
     <Compile Include="Lib\Native\netapi32.cs" />
+    <Compile Include="Lib\Native\ntdll.cs" />
     <Compile Include="Lib\Native\secur32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -104,6 +121,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ConcreteCommand\ProcessManage\" />
+    <Folder Include="ConcreteCommand\RegistryManage\" />
+    <Folder Include="ConcreteCommand\ServiceManage\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

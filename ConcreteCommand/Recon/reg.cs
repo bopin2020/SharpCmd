@@ -18,20 +18,6 @@ namespace SharpCmd.ConcreteCommand.Recon
         {
             QueryRegInfo queryRegInfo = new QueryRegInfo(RootRegistry.LocalMachine, "SYSTEM\\ControlSet001");
             Console.WriteLine(queryRegInfo.RegistrySubKeyName);
-
-            Doa(queryRegInfo);
-
-        }
-        private void Doa(QueryRegInfo queryRegInfo)
-        {
-            foreach (var item in queryRegInfo.EnumSubKeysName())
-            {
-                Console.WriteLine("\t" + item);
-                string newsubkey = queryRegInfo.RegistrySubKeyName + "\\" + item;
-                queryRegInfo.ReSetSubkeyName(newsubkey);
-                Console.WriteLine(newsubkey);
-                Doa(queryRegInfo);
-            }
         }
     }
 

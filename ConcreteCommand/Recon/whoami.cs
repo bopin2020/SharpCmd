@@ -1,16 +1,21 @@
-﻿using SharpCmd.Contract;
+﻿#define MiniDInvoke
+using SharpCmd.Contract;
 using SharpCmd.Lib.Help;
 using SharpCmd.Lib.Native;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.DirectoryServices;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
-
+using de = SharpCmd.Lib.Delegates;
 using static SharpCmd.Lib.Native.advapi32;
 using static SharpCmd.Lib.Native.kernel32;
 
@@ -31,7 +36,7 @@ namespace SharpCmd.ConcreteCommand.Recon
             {
                 string help = @"
 whoami
-        /user /logonid /priv /groups /all
+        /upn /fqdn /user /logonid /priv /groups /all
 ";
                 Console.WriteLine(help);
                 return;
@@ -50,7 +55,20 @@ whoami
                 return;
             }
 
-            if(arguments.ContainsKey("/user"))
+            if (arguments.ContainsKey("/upn"))
+            {
+                InitUPN();
+                return;
+            }
+
+            if (arguments.ContainsKey("/fqdn"))
+            {
+                InitFQDN();
+                return;
+            }
+
+
+            if (arguments.ContainsKey("/user"))
             {
                 InitUser();
                 return;
@@ -80,6 +98,27 @@ whoami
                 InitGroups();
                 InitPriv();
             }
+        }
+        /// <summary>
+        /// https://stackoverflow.com/questions/804700/how-to-find-fqdn-of-local-machine-in-c-net
+        /// </summary>
+        private void InitFQDN()
+        {
+            DirectoryEntry rootDSE = new DirectoryEntry();
+
+            foreach (var item in rootDSE.GetType().GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance))
+            {
+                Console.WriteLine(item.Name);
+                if(item.Name == "GetUsername")
+                {
+                    Console.WriteLine(item.Invoke(rootDSE, null)?.ToString());
+                }
+                if (item.Name == "GetPassword")
+                {
+                    Console.WriteLine(item.Invoke(rootDSE, null)?.ToString());
+                }
+            }
+            Console.WriteLine(rootDSE.Properties["defaultNamingContext"]?.Value);
         }
     }
     internal partial class whoami
@@ -166,6 +205,11 @@ whoami
             Console.WriteLine();
 
         }
+
+        private void InitUPN()
+        {
+            Console.WriteLine(Environment.UserName + "@" + Domain.GetComputerDomain().Name);
+        }
     }
 
     internal partial class whoami
@@ -206,7 +250,13 @@ whoami
 
         private string GetUserName()
         {
-#if pinvoke
+#if MiniDInvoke
+            StringBuilder sb = new StringBuilder(256);
+            int usernameSize = 0;
+            //if the user account is not in a domain,only NameSamCompatible is supported
+            de.secur32.GetUserNameEx(netapi32.IsInDomain() ? ExtendedNameFormat.NameUserPrincipal : ExtendedNameFormat.NameSamCompatible, sb, ref usernameSize);
+            return sb.ToString();
+#elif pinvoke
             // GetUserNameExW
             StringBuilder sb = new StringBuilder(256);
             int usernameSize = 0;
@@ -220,10 +270,10 @@ whoami
 #elif Environment
             return Environment.MachineName + Constant.SpecialSlash + Environment.UserName;
 
-#elif !WindowsIdentity
+#elif WindowsIdentity
             return currentIdentity.Name;
 #else
-
+            return Environment.MachineName + Constant.SpecialSlash + Environment.UserName;
 #endif
         }
 

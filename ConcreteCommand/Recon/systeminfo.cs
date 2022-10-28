@@ -84,7 +84,7 @@ namespace SharpCmd.ConcreteCommand.Recon
             }
 
             InstallationType();
-            regInfo.ReSetSubkeyName("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion");
+            regInfo.SetSubkeyName("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion");
         }
 
     }
@@ -152,7 +152,7 @@ namespace SharpCmd.ConcreteCommand.Recon
         /// <returns></returns>
         private string GetBIOSVersion()
         {
-            regInfo.ReSetSubkeyName("HARDWARE\\DESCRIPTION\\System\\BIOS");
+            regInfo.SetSubkeyName("HARDWARE\\DESCRIPTION\\System\\BIOS");
             string BIOSVendor = regInfo.CurrentKey.GetValue("BIOSVendor").ToString();
             string BIOSVersion = regInfo.CurrentKey.GetValue("BIOSVersion").ToString();
             string BIOSReleaseDate = regInfo.CurrentKey.GetValue("BIOSReleaseDate").ToString();
@@ -193,19 +193,19 @@ namespace SharpCmd.ConcreteCommand.Recon
             return Environment.Is64BitOperatingSystem ? "x64-based PC" : "x86-based PC";
 
 #else
-            return IntPtr.Size == 0 ? "x64-based PC" : "x86-based PC";
+            return IntPtr.Size == 8 ? "x64-based PC" : "x86-based PC";
 
 #endif
         }
 
         private string[] GetCPU()
         {
-            regInfo.ReSetSubkeyName("HARDWARE\\DESCRIPTION\\System\\CentralProcessor");
+            regInfo.SetSubkeyName("HARDWARE\\DESCRIPTION\\System\\CentralProcessor");
             List<string> cpues = new List<string>();
             int count = 1;
             foreach (var item in regInfo.EnumSubKeysName())
             {
-                regInfo.ReSetSubkeyName("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\" + item);
+                regInfo.SetSubkeyName("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\" + item);
                 string Identifier = regInfo.CurrentKey.GetValue("Identifier").ToString();
                 string VendorIdentifier = regInfo.CurrentKey.GetValue("VendorIdentifier").ToString();
                 string ProcessorNameString = regInfo.CurrentKey.GetValue("ProcessorNameString").ToString();

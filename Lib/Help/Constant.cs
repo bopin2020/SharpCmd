@@ -9,8 +9,10 @@ namespace SharpCmd.Lib.Help
     {
         public const string SpecialChar = ">";
         public const string SpecialSlash = "\\";
+        public const string BackSlash = SpecialSlash;
         public const string PropertyKeyValue = "\t:\t";
         public const string T = "\t";
+        public const string Dot = ".";
         public const string CommandSyntaxInvalid = "The Command Syntax is invalid\n";
         public const string FileNotFound = "The File was not found\n";
     }

@@ -6,8 +6,28 @@ using System.Text;
 
 namespace SharpCmd.Lib.Native
 {
-    internal class kernel32
+    public class kernel32
     {
+        [DllImport("kernel32")]
+        public static extern bool GetVersionEx(ref OSVERSIONINFOEX osvi);
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        public struct OSVERSIONINFOEX
+        {
+            public int dwOSVersionInfoSize;
+            public int dwMajorVersion;
+            public int dwMinorVersion;
+            public int dwBuildNumber;
+            public int dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            public string szCSDVersion;
+            public UInt16 wServicePackMajor;
+            public UInt16 wServicePackMinor;
+            public UInt16 wSuiteMask;
+            public byte wProductType;
+            public byte wReserved;
+        }
+
         [DllImport("kernel32.dll")]
         public static extern uint GetSystemDirectory([Out] StringBuilder lpBuffer, uint uSize);
 
@@ -119,6 +139,9 @@ namespace SharpCmd.Lib.Native
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern int GetLocaleInfoEx(String lpLocaleName, LCTYPE LCType, StringBuilder lpLCData, int cchData);
+
+        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
+        public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
 
         public enum LCTYPE : uint
         {

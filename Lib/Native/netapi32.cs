@@ -7,7 +7,7 @@ using System.Text;
 
 namespace SharpCmd.Lib.Native
 {
-    internal class netapi32
+    public class netapi32
     {
         [DllImport("NetApi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern NET_API_STATUS NetUseEnum(

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,6 +13,38 @@ namespace SharpCmd.ConcreteCommand.Recon
     internal class net : IContract
     {
         public string CommandName => "net";
+
+        public bool RenameUser(string oldLoginName, string newLoginName)
+        {
+            bool renamed = false;
+            try
+            {
+                using (DirectoryEntry AD = new
+                           DirectoryEntry("WinNT://" + Environment.MachineName + ",computer"))
+                {
+                    try
+                    {
+                        using (DirectoryEntry NewUser = AD.Children.Find(oldLoginName, "user"))
+                        {
+                            if (NewUser != null)
+                            {
+                                NewUser.Rename(newLoginName);
+                                renamed = true;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //TODO: Log
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: Log
+            }
+            return renamed;
+        }
 
         public void Execute(Dictionary<string, string> arguments)
         {

@@ -6,11 +6,10 @@ using System.Text;
 
 namespace SharpCmd.Lib.Native
 {
-    internal class secur32
+    public class secur32
     {
         [DllImport("secur32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern byte GetUserNameEx(ExtendedNameFormat nameFormat,
-    StringBuilder userName, ref int userNameSize);
+        public static extern byte GetUserNameEx(ExtendedNameFormat nameFormat,StringBuilder userName, ref int userNameSize);
     }
 
     public enum ExtendedNameFormat

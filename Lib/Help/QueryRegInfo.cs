@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using SharpCmd.Lib.ExceptionCollection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,46 @@ namespace SharpCmd.Lib.Help
         Users
     }
 
-    internal class QueryRegInfo
+    internal struct SpecifiedKeyValues
     {
+        public string ValueNames { get; }
+        public RegistryValueKind ValueKind { get; }
+        public object Value { get; }
+
+        public SpecifiedKeyValues(string ValueNames, RegistryValueKind ValueKind, object Value)
+        {
+            this.ValueNames = ValueNames;
+            this.ValueKind = ValueKind;
+            this.Value = Value; 
+        }
+    }
+
+    /// <summary>
+    /// non-thread safe sealed class
+    /// </summary>
+    internal sealed class QueryRegInfo
+    {
+        // ==========================================================================================
+        #region private fields
+
         private volatile RegistryKey rootkey;
         private int recursionDeep = 10;
+        private ICollection<SpecifiedKeyValues> specifiedKeyValues { get; set; } = new HashSet<SpecifiedKeyValues>();
+
+        #endregion
+
+        // ==========================================================================================
+        #region public fields
+
         public string RegistrySubKeyName { get; set; }
         public volatile RegistryKey CurrentKey;
-        public QueryRegInfo(RegistryKey rootkey,string subkeyname = "")
+
+        #endregion
+
+        // ==========================================================================================
+        #region constructors
+
+        public QueryRegInfo(RegistryKey rootkey, string subkeyname = "")
         {
             this.rootkey = rootkey;
             this.RegistrySubKeyName = subkeyname;
@@ -35,6 +69,29 @@ namespace SharpCmd.Lib.Help
             CurrentKey = rootkey.OpenSubKey(this.RegistrySubKeyName);
         }
 
+
+        #endregion
+
+        // ==========================================================================================
+        #region private methods
+
+        /// <summary>
+        /// Reset ICollection result Count equals 0
+        /// </summary>
+        private void Clear()
+        {
+            specifiedKeyValues.Clear();
+        }
+
+        private void Dispose(RegistryKey CurrentKey)
+        {
+#if NET40
+            CurrentKey.Dispose();
+#else
+            CurrentKey.Close();
+#endif
+            CurrentKey = null;
+        }
 
         private RegistryKey Convert(RootRegistry rootRegistry)
         {
@@ -61,11 +118,165 @@ namespace SharpCmd.Lib.Help
             return rootkey;
         }
 
+        #endregion
+
+        // ==========================================================================================
+        #region public methods
+
+        /// <summary>
+        /// Enum The Current Key Values
+        /// </summary>
+        /// <returns></returns>
+        public ICollection<SpecifiedKeyValues> EnumKeyValues()
+        {
+            return EnumSpecifiedKeyValues(CurrentKey);
+        }
+
+        public ICollection<SpecifiedKeyValues> EnumSpecifiedKeyValues(RegistryKey registryKey)
+        {
+            // Clear the last query collection
+            Clear();
+            var key = registryKey;
+            // Add the default value
+            specifiedKeyValues.Add(new SpecifiedKeyValues(
+                ValueNames: "Default",
+                ValueKind: RegistryValueKind.String,
+                Value: key.GetValue("") == null ? "n/a" : key.GetValue("")
+                ));
+
+            foreach (string valueName in key.GetValueNames())
+            {
+                specifiedKeyValues.Add(new SpecifiedKeyValues(
+                    ValueNames: valueName,
+                    ValueKind: key.GetValueKind(valueName),
+                    Value: key.GetValue(valueName)
+                    ));
+
+#if OptimizeResult
+                switch (key.GetValueKind(valueName))
+                {
+                    case RegistryValueKind.String:
+                    case RegistryValueKind.ExpandString:
+                    case RegistryValueKind.DWord:
+                    case RegistryValueKind.QWord:
+                    case RegistryValueKind.Unknown:
+#if NET40
+                    case RegistryValueKind.None:
+#endif
+                        {
+                            values.Add($"{valueName} : {key.GetValue(valueName)}");
+                        }
+                        break;
+                    case RegistryValueKind.Binary:
+                        {
+                            //byte[] data = (byte[])key.GetValue(valueName);
+                            //StringBuilder sb = new StringBuilder();
+                            //using (MemoryStream ms = new MemoryStream())
+                            //{
+                            //    ms.Write(data, 0, data.Length);
+                            //    ms.Position = 0;
+                            //    for (int i = 0; i < data.Length / 32; i++)
+                            //    {
+                            //        byte[] row = new byte[32];
+                            //        ms.Read(row, 0, 32);
+
+                            //        sb.AppendLine(Convert.ToString(row, 16));
+                            //    }
+                            //    byte[] tail = new byte[data.Length % 32];
+                            //    ms.Read(tail, 0, tail.Length);
+                            //    sb.AppendLine(Convert.ToString(tail, 16));
+                            //}
+
+
+
+                            Console.WriteLine($"{valueName} : ");
+                        }
+                        break;
+                    case RegistryValueKind.MultiString:
+                        {
+                            values.Add($"{valueName} : {String.Join("\n\t", (string[])key.GetValue(valueName))}");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+#endif
+            }
+            return specifiedKeyValues;
+        }
+
+        public IEnumerable<string> EnumSubKeysName(string subkey = "")
+        {
+            if (!String.IsNullOrEmpty(RegistrySubKeyName))
+            {
+                return EnumSubKeysName(RegistrySubKeyName, false);
+            }
+            return EnumSubKeysName(subkey, false);
+
+        }
+
+        /// <summary>
+        /// recursion call
+        /// </summary>
+        /// <param name="subkey"></param>
+        /// <param name="recursion"></param>
+        /// <returns></returns>
+        public IEnumerable<string> EnumSubKeysName(string subkey, bool recursion = false)
+        {
+            if(String.IsNullOrEmpty(subkey))
+            {
+                subkey = RegistrySubKeyName;
+            }
+            return EnumSubKeysName(rootkey.OpenSubKey(subkey),true);
+        }
+
+        public IEnumerable<string> EnumSubKeysName(RegistryKey registryKey, bool recursion = false)
+        {
+            List<string> values = new List<string>();
+            //CurrentKey = registryKey;
+            var key = registryKey;
+            var tmp = key.GetSubKeyNames();
+            if (tmp.Count() == 0)
+            {
+                return values;
+            }
+            if (key != null)
+            {
+                values.AddRange(tmp);
+            }
+
+            if (recursion && this.recursionDeep != 0)
+            {
+                this.recursionDeep--;
+                foreach (var item in tmp)
+                {
+                    values.AddRange(EnumSubKeysName(CurrentKey.OpenSubKey(item), true));
+                }
+            }
+            return values;
+        }
+
+        public ICollection<SpecifiedKeyValues> GetKeyValues(bool throwException = true)
+        {
+            if (specifiedKeyValues.Count == 0 && throwException)
+            {
+                throw new CollectionEmptyException();
+            }
+
+            return specifiedKeyValues;
+        }
+
+        /// <summary>
+        /// 重新设置 根Rootkey
+        /// </summary>
+        /// <param name="rootkey"></param>
+        /// <returns></returns>
         public bool SetRootkey(RegistryKey rootkey)
         {
             string lastStatus = this.rootkey.Name;
             this.rootkey = rootkey;
-            if(lastStatus != this.rootkey.Name)
+            Dispose(this.CurrentKey);
+            if (lastStatus != this.rootkey.Name)
             {
                 return true;
             }
@@ -76,109 +287,34 @@ namespace SharpCmd.Lib.Help
         {
             return SetRootkey(Convert(rootRegistry));
         }
-
+        /// <summary>
+        /// 枚举子键时  设置递归深度
+        /// </summary>
+        /// <param name="len"></param>
         public void SetRecursionDeep(int len)
         {
             this.recursionDeep = len;
         }
 
-        public void ReSetSubkeyName(string newsubkey)
-        {
-            RegistrySubKeyName = newsubkey;
-            CurrentKey = rootkey.OpenSubKey(RegistrySubKeyName);
-        }
-
         /// <summary>
-        /// 枚举指定键下的name value
-        /// 返回类型替换为  名称，类型，值  三元组
+        /// 重新设置子键名
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<string> EnumKeyValues()
+        /// <param name="newsubkey"></param>
+        public void SetSubkeyName(string newsubkey, bool fromRoot = true)
         {
-            return EnumSpecifiedKeyValues(rootkey);
-        }
-
-        public IEnumerable<string> EnumSpecifiedKeyValues(RegistryKey registryKey)
-        {
-            List<string> values = new List<string>();
-
-            using (var key = registryKey)
+            if (fromRoot)
             {
-                foreach (string valueName in key.GetValueNames())
-                {
-                    switch (key.GetValueKind(valueName))
-                    {
-                        case RegistryValueKind.String:
-                        case RegistryValueKind.ExpandString:
-                        case RegistryValueKind.DWord:
-                        case RegistryValueKind.QWord:
-                        case RegistryValueKind.Unknown:
-#if NET40
-                        case RegistryValueKind.None:
-#endif
-                            {
-                                values.Add($"{valueName} : {key.GetValue(valueName)}");
-                            }
-                            break;
-                        case RegistryValueKind.Binary:
-                            {
-                                //byte[] data = (byte[])key.GetValue(valueName);
-                                //StringBuilder sb = new StringBuilder();
-                                //using (MemoryStream ms = new MemoryStream())
-                                //{
-                                //    ms.Write(data, 0, data.Length);
-                                //    ms.Position = 0;
-                                //    for (int i = 0; i < data.Length / 32; i++)
-                                //    {
-                                //        byte[] row = new byte[32];
-                                //        ms.Read(row, 0, 32);
-
-                                //        sb.AppendLine(Convert.ToString(row, 16));
-                                //    }
-                                //    byte[] tail = new byte[data.Length % 32];
-                                //    ms.Read(tail, 0, tail.Length);
-                                //    sb.AppendLine(Convert.ToString(tail, 16));
-                                //}
-
-
-                                Console.WriteLine($"{valueName} : ");
-                            }
-                            break;
-                        case RegistryValueKind.MultiString:
-                            {
-                                values.Add($"{valueName} : {String.Join("\n\t", (string[])key.GetValue(valueName))}");
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
+                RegistrySubKeyName = newsubkey;
+                CurrentKey = rootkey.OpenSubKey(RegistrySubKeyName);
             }
-
-            return values;
-        }
-
-        public IEnumerable<string> EnumSubKeysName(string subkey = "")
-        {
-            if(!String.IsNullOrEmpty(RegistrySubKeyName))
+            else
             {
-                return EnumSubKeysName(RegistrySubKeyName,false);
+                RegistrySubKeyName += Constant.BackSlash;
+                RegistrySubKeyName += newsubkey;
+                CurrentKey = CurrentKey.OpenSubKey(RegistrySubKeyName);
             }
-            return EnumSubKeysName(subkey, false);
-
         }
 
-        public IEnumerable<string> EnumSubKeysName(string subkey,bool recursion = false)
-        {
-            List<string> values = new List<string>();
-            using (var key = rootkey.OpenSubKey(subkey))
-            {
-                if(key != null)
-                    values.AddRange(key.GetSubKeyNames());
-            }
-
-            return values;
-        }
+        #endregion
     }
 }

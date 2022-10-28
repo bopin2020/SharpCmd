@@ -9,7 +9,7 @@ namespace SharpCmd.Lib.Native
     /// <summary>
     /// https://github.com/fschwiet/PShochu/blob/master/PShochu/PInvoke/AdvApi32PInvoke.cs
     /// </summary>
-    internal class advapi32
+    public class advapi32
     {
         [StructLayout(LayoutKind.Sequential)]
         public struct PRIVILEGE_SET
