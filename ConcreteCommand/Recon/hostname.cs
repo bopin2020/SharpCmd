@@ -15,6 +15,8 @@ namespace SharpCmd.ConcreteCommand.Recon
     {
         public string CommandName => nameof(hostname);
 
+        public string Description => "gain the hostname";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             Console.WriteLine(GetHostname());

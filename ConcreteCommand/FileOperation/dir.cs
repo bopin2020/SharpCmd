@@ -12,6 +12,8 @@ namespace SharpCmd.ConcreteCommand.FileOperation
     {
         public string CommandName => "dir";
 
+        public string Description => "enumerate files or dirs";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             List<FileModel> files = new List<FileModel>();

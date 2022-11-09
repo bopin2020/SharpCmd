@@ -11,6 +11,8 @@ namespace SharpCmd.ConcreteCommand.FileOperation
     {
         public string CommandName => "copy";
 
+        public string Description => "copy file from a to b";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             if(arguments.Count < 2)

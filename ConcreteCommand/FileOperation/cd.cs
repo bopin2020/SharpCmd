@@ -11,6 +11,8 @@ namespace SharpCmd.ConcreteCommand.FileOperation
     {
         public string CommandName => "cd";
 
+        public string Description => "change the current directory";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             string newPath = null;

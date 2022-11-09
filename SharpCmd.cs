@@ -32,7 +32,7 @@ namespace SharpCmd
             this.command = command;
         }
 
-        public void Init()
+        public void Init(string[] args)
         {
             foreach (var item in contracts)
             {
@@ -43,6 +43,21 @@ namespace SharpCmd
             kernel32.GetSystemDirectory(sb,256);
             Directory.SetCurrentDirectory(sb.ToString());
 #endif
+            if(args.Length != 0)
+            {
+                var result = ArgumentParser.Parse(args);
+                try
+                {
+                    this.command.Notify(result.Arguments);
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine("[Error]\t" + ex.Message);
+                    Console.Error.WriteLine(ex.StackTrace);
+                }
+                return;
+            }
+
             while (true)
             {
                 Console.Write(Environment.UserName + (Common.IsHighIntegrity() ? "#> " : "$> ") + Directory.GetCurrentDirectory() + Constant.SpecialChar);

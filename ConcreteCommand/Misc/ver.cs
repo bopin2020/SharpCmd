@@ -1,4 +1,4 @@
-﻿#define NT
+﻿#define PInvoke
 using SharpCmd.Contract;
 using SharpCmd.Lib.Delegates;
 using SharpCmd.Lib.Help;
@@ -15,6 +15,8 @@ namespace SharpCmd.ConcreteCommand.Misc
     {
         public string CommandName => nameof(ver);
 
+        public string Description => "show current os version and clr version";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             Console.WriteLine();
@@ -25,7 +27,7 @@ namespace SharpCmd.ConcreteCommand.Misc
             OSVERSIONINFOEX osversioninfo = new OSVERSIONINFOEX();
             osversioninfo.dwOSVersionInfoSize = Marshal.SizeOf(osversioninfo);
 
-#if !NT
+#if PInvoke
             /// 
             /// in windows 8.1 and later,GetVersion and GetVersionEx as well as Environment.OSVersion have been deprecated
             /// 

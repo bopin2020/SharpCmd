@@ -2,6 +2,7 @@
 using SharpCmd.Lib.ExceptionCollection;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -40,7 +41,7 @@ namespace SharpCmd.Lib.Help
 
         private volatile RegistryKey rootkey;
         private int recursionDeep = 10;
-        private ICollection<SpecifiedKeyValues> specifiedKeyValues { get; set; } = new HashSet<SpecifiedKeyValues>();
+        private ICollection<SpecifiedKeyValues> specifiedKeyValues { get; set; } = new Collection<SpecifiedKeyValues>();
 
         #endregion
 
@@ -233,6 +234,10 @@ namespace SharpCmd.Lib.Help
         public IEnumerable<string> EnumSubKeysName(RegistryKey registryKey, bool recursion = false)
         {
             List<string> values = new List<string>();
+            if (registryKey is null)
+            {
+                return values;
+            }
             //CurrentKey = registryKey;
             var key = registryKey;
             var tmp = key.GetSubKeyNames();

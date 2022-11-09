@@ -14,6 +14,8 @@ namespace SharpCmd.ConcreteCommand.Recon
     {
         public string CommandName => "reg";
 
+        public string Description => "Register Manager";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             QueryRegInfo queryRegInfo = new QueryRegInfo(RootRegistry.LocalMachine, "SYSTEM\\ControlSet001");

@@ -8,11 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
 using de = SharpCmd.Lib.Delegates;
@@ -29,6 +25,8 @@ namespace SharpCmd.ConcreteCommand.Recon
     internal partial class whoami : IContract
     {
         public string CommandName => "whoami";
+
+        public string Description => "show the current user sid,priv,groups informations";
 
         public void Execute(Dictionary<string, string> arguments)
         {
@@ -254,6 +252,7 @@ whoami
             StringBuilder sb = new StringBuilder(256);
             int usernameSize = 0;
             //if the user account is not in a domain,only NameSamCompatible is supported
+            de.secur32.GetUserNameEx(netapi32.IsInDomain() ? ExtendedNameFormat.NameUserPrincipal : ExtendedNameFormat.NameSamCompatible, sb, ref usernameSize);
             de.secur32.GetUserNameEx(netapi32.IsInDomain() ? ExtendedNameFormat.NameUserPrincipal : ExtendedNameFormat.NameSamCompatible, sb, ref usernameSize);
             return sb.ToString();
 #elif pinvoke

@@ -10,6 +10,8 @@ namespace SharpCmd.ConcreteCommand.Misc
     {
         public string CommandName => "exit";
 
+        public string Description => "exit process";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             Environment.Exit(0);

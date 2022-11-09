@@ -16,6 +16,7 @@ namespace SharpCmd.ConcreteCommand
         ProcessManage,
         Recon,
         ServiceManage,
-        RegistryManage
+        RegistryManage,
+        ExecutePayload
     }
 }

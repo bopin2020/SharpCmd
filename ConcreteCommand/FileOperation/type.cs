@@ -13,6 +13,8 @@ namespace SharpCmd.ConcreteCommand.FileOperation
     {
         public string CommandName => "type";
 
+        public string Description => "read text file";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             string filename = null;

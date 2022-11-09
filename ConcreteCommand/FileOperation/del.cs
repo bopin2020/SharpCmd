@@ -12,6 +12,8 @@ namespace SharpCmd.ConcreteCommand.FileOperation
     {
         public string CommandName => "del";
 
+        public string Description => "delete files";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             FileSecurity fileSecurity = new FileSecurity(arguments.Keys.ToArray()[1],AccessControlSections.Access);

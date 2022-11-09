@@ -11,6 +11,8 @@ namespace SharpCmd.ConcreteCommand.FileOperation
     {
         public string CommandName => "pwd";
 
+        public string Description => "print the current path";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             Console.WriteLine(Directory.GetCurrentDirectory());

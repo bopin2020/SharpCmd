@@ -15,7 +15,7 @@ namespace SharpCmd
         {
             Command command = new CommandWrapper();
             SharpCmd sharpCmd = new SharpCmd(command);
-            sharpCmd.Init();
+            sharpCmd.Init(args);
         }
     }
 }

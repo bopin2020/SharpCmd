@@ -2,10 +2,7 @@
 using SharpCmd.Lib.Help;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
-using System.DirectoryServices;
 using System.DirectoryServices.ActiveDirectory;
 using static SharpCmd.Lib.Native.kernel32;
 
@@ -14,6 +11,8 @@ namespace SharpCmd.ConcreteCommand.Recon
     internal partial class systeminfo : IContract
     {
         public string CommandName => "systeminfo";
+
+        public string Description => "system hardware information";
 
         /// <summary>
         /// https://github.com/tlewiscpp/SystemInfo/blob/master/src/osinfo.cpp

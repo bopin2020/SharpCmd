@@ -10,6 +10,8 @@ namespace SharpCmd.ConcreteCommand.Recon
     {
         public string CommandName => "ping";
 
+        public string Description => "ICMP Package Management";
+
         public void Execute(Dictionary<string, string> arguments)
         {
 

@@ -12,6 +12,8 @@ namespace SharpCmd.ConcreteCommand.Misc
     {
         public string CommandName => nameof(test);
 
+        public string Description => "just for test";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             QueryRegInfo queryRegInfo = new QueryRegInfo(RootRegistry.ClassesRoot, "cmdfile");
@@ -26,11 +28,19 @@ namespace SharpCmd.ConcreteCommand.Misc
             }
 
             queryRegInfo.SetRootkey(RootRegistry.LocalMachine);
-            queryRegInfo.SetSubkeyName("SYSTEM\\CurrentControlSet\\Control");
+            queryRegInfo.SetSubkeyName("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug");
 
             foreach (var item in queryRegInfo.EnumKeyValues())
             {
-                Console.WriteLine(item.ValueNames + Constant.T + item.ValueKind + Constant.T + item.Value);
+                Console.WriteLine(String.Format("{0,-30} {1,-15} {2}",item.ValueNames,item.ValueKind,item.Value));
+            }
+        }
+
+        private void WriteToTable(params object[] args)
+        {
+            foreach (var item in args)
+            {
+                Console.Write("{0,-20}",item);
             }
         }
     }

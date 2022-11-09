@@ -10,6 +10,8 @@ namespace SharpCmd.ConcreteCommand.Recon
     {
         public string CommandName => "ipconfig";
 
+        public string Description => "print network information";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             

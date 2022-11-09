@@ -12,6 +12,8 @@ namespace SharpCmd.ConcreteCommand.Misc
     {
         public string CommandName => "cls";
 
+        public string Description => "clear the current screen";
+
         public void Execute(Dictionary<string, string> arguments)
         {
             Console.Clear();
