@@ -1,4 +1,5 @@
 ﻿using SharpCmd.Contract;
+using SharpCmd.Lib.Delegates;
 using SharpCmd.Lib.Help;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,9 @@ namespace SharpCmd.ConcreteCommand.Misc
 
         public void Execute(Dictionary<string, string> arguments)
         {
+            user32.MessageBox(IntPtr.Zero, "", "", 1);
+
+
             QueryRegInfo queryRegInfo = new QueryRegInfo(RootRegistry.ClassesRoot, "cmdfile");
             foreach (var item in queryRegInfo.EnumSubKeysName("",true))
             {

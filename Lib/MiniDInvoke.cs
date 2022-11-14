@@ -124,13 +124,11 @@ namespace SharpCmd.Lib
                     );
                 }
 
-
-
                 public static IntPtr GetProcAddress(IntPtr dll, string functionname, bool throwException = false)
                 {
                     return Entry(() =>
                     {
-        #if DOTNET
+#if DOTNET
                         if(NativeLibrary.TryGetExport(dll,functionname,out IntPtr address))
                         {
                             return address;
@@ -139,13 +137,59 @@ namespace SharpCmd.Lib
                         {
                             throw new Exception();
                         }
-        #else
+#else
+
+#if 反射查找Win32API
+                        foreach (var item in assembly.GetTypes())
+                        {
+                            Console.WriteLine(item.FullName);
+                            if (item.FullName == "Microsoft.Win32.Win32Native")
+                            {
+
+                            }
+                            if (item.FullName == "Microsoft.Win32.UnsafeNativeMethods")
+                            {
+
+                            }
+
+                            foreach (var method in item.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                            {
+                                if (method.Name.Contains("GetProcAddress"))
+                                {
+                                    Console.WriteLine(item.FullName + "\t" + method.Name + "\t" + method);
+                                }
+                                if (method.Name.Contains("GetModuleHandle"))
+                                {
+                                    Console.WriteLine(item.FullName + "\t" + method.Name + "\t" + method.ToString());
+                                }
+                                if (method.Name.Contains("LoadLibrary"))
+                                {
+                                    Console.WriteLine(item.FullName + "\t" + method.Name + "\t" + method.ToString());
+                                }
+                            }
+
+                        }
+#endif
+
                         if (type == null)
                             type = assembly.GetType(typeFullName);
+                        if(type == null)
+                        {
+                            throw new Exception(typeFullName + "was not found" + assembly.FullName);
+                        }
                         if (_GetProcAddress == null)
                             _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags);
-                        return (IntPtr)_GetProcAddress.Invoke(null, new object[] { dll, functionname });
-        #endif
+
+#if NET35
+                        //  .NET3.5 GetProcAddress 第一个方法参数类型不是 IntPtr  而是HandleRef 结构体
+                        object arg1 = new HandleRef(null, dll);
+
+#elif NET40
+                        IntPtr arg1 = dll;
+#endif
+
+                        return (IntPtr)_GetProcAddress.Invoke(null, new object[] { arg1, functionname });
+#endif
                     },
                     throwException
                     );

@@ -14,8 +14,10 @@ namespace SharpCmd
         static void Main(string[] args)
         {
             Command command = new CommandWrapper();
-            SharpCmd sharpCmd = new SharpCmd(command);
-            sharpCmd.Init(args);
+            using (SharpCmd sharpCmd = new SharpCmd(command))
+            {
+                sharpCmd.Init(args);
+            }
         }
     }
 }

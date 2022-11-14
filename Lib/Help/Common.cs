@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Principal;
 using System.Text;
 
@@ -19,6 +20,21 @@ namespace SharpCmd.Lib.Help
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
 
+        public static long ToInt(string addr)
+        {
+            // careful of sign extension: convert to uint first;
+            // unsigned NetworkToHostOrder ought to be provided.
+            return (long)(uint)IPAddress.NetworkToHostOrder(
+                 (int)IPAddress.Parse(addr).Address);
+        }
+
+        public static string ToAddr(long address)
+        {
+            return IPAddress.Parse(address.ToString()).ToString();
+            // This also works:
+            // return new IPAddress((uint) IPAddress.HostToNetworkOrder(
+            //    (int) address)).ToString();
+        }
 
     }
 }

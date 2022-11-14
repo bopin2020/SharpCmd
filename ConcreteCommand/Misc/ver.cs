@@ -1,4 +1,4 @@
-﻿#define PInvoke
+﻿#define MiniDInvoke
 using SharpCmd.Contract;
 using SharpCmd.Lib.Delegates;
 using SharpCmd.Lib.Help;

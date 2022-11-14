@@ -11,7 +11,7 @@ using System.Text;
 
 namespace SharpCmd
 {
-    internal class SharpCmd
+    internal class SharpCmd : IDisposable
     {
         private List<IContract> contracts = new List<IContract>();
         private Command command;
@@ -30,6 +30,11 @@ namespace SharpCmd
             }
 
             this.command = command;
+        }
+
+        public void Dispose()
+        {
+            contracts.Clear();
         }
 
         public void Init(string[] args)
@@ -61,7 +66,7 @@ namespace SharpCmd
             while (true)
             {
                 Console.Write(Environment.UserName + (Common.IsHighIntegrity() ? "#> " : "$> ") + Directory.GetCurrentDirectory() + Constant.SpecialChar);
-                var result = ArgumentParser.Parse(Console.ReadLine().Split());
+                var result = ArgumentParser.Parse(Parse(Console.ReadLine()));
                 try
                 {
                     this.command.Notify(result.Arguments);
@@ -73,5 +78,12 @@ namespace SharpCmd
                 }
             }
         }
+
+        private string[] Parse(string input)
+        {
+            string[] result = input.Split();
+            return result;
+        }
+
     }
 }

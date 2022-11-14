@@ -9,7 +9,12 @@ namespace SharpCmd.Lib.Native
 {
     public class ntdll
     {
-        [DllImport("ntdll.dll", SetLastError = true)]
+        private const string NTDLL = "ntdll.dll";
+
+        [DllImport(NTDLL, SetLastError = true)]
         public static extern int RtlGetVersion(ref OSVERSIONINFOEX versionInfo);
+
+        [DllImport(NTDLL,CharSet = CharSet.Unicode)]
+        public static extern string RtlIpv4AddressToStringW(IntPtr addr, out StringBuilder ipaddr);
     }
 }
