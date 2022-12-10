@@ -1,6 +1,0 @@
-D:\Code\CSharp\SharpCmd\obj\NET40\net35\SharpCmd.csproj.AssemblyReference.cache
-D:\Code\CSharp\SharpCmd\obj\NET40\net35\SharpCmd.csproj.SuggestedBindingRedirects.cache
-D:\Code\CSharp\SharpCmd\obj\NET40\net35\SharpCmd.GeneratedMSBuildEditorConfig.editorconfig
-D:\Code\CSharp\SharpCmd\obj\NET40\net35\SharpCmd.AssemblyInfoInputs.cache
-D:\Code\CSharp\SharpCmd\obj\NET40\net35\SharpCmd.AssemblyInfo.cs
-D:\Code\CSharp\SharpCmd\obj\NET40\net35\SharpCmd.csproj.CoreCompileInputs.cache
