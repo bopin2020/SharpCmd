@@ -11,18 +11,20 @@ using static SharpCmd.Lib.Native.kernel32;
 
 namespace SharpCmd.ConcreteCommand.Misc
 {
-    internal class ver : IContract
+    internal class ver : MiscBase
     {
-        public string CommandName => nameof(ver);
+        public override string CommandName => nameof(ver);
 
-        public string Description => "show current os version and clr version";
+        public override string Description => "show current os version and clr version";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "ver";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             Console.WriteLine();
             OperatingSystem operatingSystem = Environment.OSVersion;
-            Console.WriteLine(operatingSystem.VersionString);
-            Console.WriteLine(Environment.Version);
+            Console.WriteLine("OperatingSystem:\t" + operatingSystem.VersionString);
+            Console.WriteLine("CLR:\t" + Environment.Version);
 
             OSVERSIONINFOEX osversioninfo = new OSVERSIONINFOEX();
             osversioninfo.dwOSVersionInfoSize = Marshal.SizeOf(osversioninfo);

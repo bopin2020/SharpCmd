@@ -8,13 +8,15 @@ using static SharpCmd.Lib.Native.kernel32;
 
 namespace SharpCmd.ConcreteCommand.Misc
 {
-    internal class cls : IContract
+    internal class cls : MiscBase
     {
-        public string CommandName => "cls";
+        public override string CommandName => "cls";
 
-        public string Description => "clear the current screen";
+        public override string Description => "clear the current screen";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "cls";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             Console.Clear();
         }

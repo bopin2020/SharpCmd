@@ -16,13 +16,15 @@ using static SharpCmd.Lib.Native.IpHlpApi;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal partial class arp : IContract
+    internal partial class arp : ReconBase
     {
-        public string CommandName => "arp";
+        public override string CommandName => "arp";
 
-        public string Description => "collect arp information";
+        public override string Description => "collect arp information";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "arp /?";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             // The number of bytes needed.
             int bytesNeeded = 0;

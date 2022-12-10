@@ -3,11 +3,14 @@ using System.Collections.Generic;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal class net : IContract
+    internal class net : ReconBase
     {
-        public string CommandName => "net";
-        public string Description => "net module";
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandName => "net";
+        public override string Description => "net module";
+
+        public override string CommandHelp => "net";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
 
         }

@@ -8,13 +8,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.FileOperation
 {
-    internal class dir : IContract
+    internal class dir : FileOperationBase
     {
-        public string CommandName => "dir";
+        public override string CommandName => "dir";
 
-        public string Description => "enumerate files or dirs";
+        public override string Description => "enumerate files or dirs";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "dir c:\\ [option]";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             List<FileModel> files = new List<FileModel>();
             string newPath = null;

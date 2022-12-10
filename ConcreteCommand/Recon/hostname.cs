@@ -11,13 +11,15 @@ namespace SharpCmd.ConcreteCommand.Recon
     /// <summary>
     /// dnsapi.dll
     /// </summary>
-    internal class hostname : IContract
+    internal class hostname : ReconBase
     {
-        public string CommandName => nameof(hostname);
+        public override string CommandName => nameof(hostname);
 
-        public string Description => "gain the hostname";
+        public override string Description => "gain the hostname";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "hostname";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             Console.WriteLine(GetHostname());
         }

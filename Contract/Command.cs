@@ -21,10 +21,40 @@ namespace SharpCmd.Contract
         {
             if(arguments.Keys.Select(x => String.Compare(x,"help",true) == 0).FirstOrDefault())
             {
-                Console.WriteLine("{0,-20} {1,-20}","Command","Description\n");
+                Dictionary<string, StringBuilder> dict = new Dictionary<string, StringBuilder>();
                 foreach (var item in observers)
                 {
-                    Console.WriteLine("{0,-20} {1,-20}",item.CommandName, item.Description);
+                    try
+                    {
+                        Contractbase contractbase = item as Contractbase;
+                        if(contractbase != null)
+                        {
+                            if(dict.ContainsKey(contractbase.ModuleName))
+                            {
+                                dict[contractbase.ModuleName].AppendLine(String.Format("\t{0,-20} {1,-20}", contractbase.CommandName, contractbase.Description));
+                            }
+                            else
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                sb.AppendLine(String.Format("\t{0,-20} {1,-20}", contractbase.CommandName, contractbase.Description));
+                                dict.Add(contractbase.ModuleName,sb);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("{0,-20} {1,-20}", item.CommandName, item.Description);
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+                Console.WriteLine("{0,-20} {1,-20} {2,-20}", "Module", "Command", "Description\n");
+                foreach (var item in dict.OrderBy(i => i.Key))
+                {
+                    Console.WriteLine(item.Key);
+                    Console.WriteLine(item.Value.ToString());
                 }
             }
             foreach (var item in observers)

@@ -8,13 +8,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.FileOperation
 {
-    internal class del : IContract
+    internal class del : FileOperationBase
     {
-        public string CommandName => "del";
+        public override string CommandName => "del";
 
-        public string Description => "delete files";
+        public override string Description => "delete files";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "del c:\\3.txt";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             FileSecurity fileSecurity = new FileSecurity(arguments.Keys.ToArray()[1],AccessControlSections.Access);
 

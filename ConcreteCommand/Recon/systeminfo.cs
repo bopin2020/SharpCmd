@@ -8,17 +8,19 @@ using static SharpCmd.Lib.Native.kernel32;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal partial class systeminfo : IContract
+    internal partial class systeminfo : ReconBase
     {
-        public string CommandName => "systeminfo";
+        public override string CommandName => "systeminfo";
 
-        public string Description => "system hardware information";
+        public override string Description => "system hardware information";
+
+        public override string CommandHelp => "systeminfo";
 
         /// <summary>
         /// https://github.com/tlewiscpp/SystemInfo/blob/master/src/osinfo.cpp
         /// </summary>
         /// <param name="arguments"></param>
-        public void Execute(Dictionary<string, string> arguments)
+        public override void Execute(Dictionary<string, string> arguments)
         {
             systeminfoModel systeminfoModel = new systeminfoModel();
             systeminfoModel.MachineName = GetMachineName();

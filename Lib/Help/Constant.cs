@@ -15,5 +15,6 @@ namespace SharpCmd.Lib.Help
         public const string Dot = ".";
         public const string CommandSyntaxInvalid = "The Command Syntax is invalid\n";
         public const string FileNotFound = "The File was not found\n";
+        public const string InitDll = "Initialize Library\t";
     }
 }

@@ -6,13 +6,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal class ping : IContract
+    internal class ping : ReconBase
     {
-        public string CommandName => "ping";
+        public override string CommandName => "ping";
 
-        public string Description => "ICMP Package Management";
+        public override string Description => "ICMP Package Management";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "ping ip | fqdn";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
 
         }

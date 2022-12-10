@@ -11,13 +11,15 @@ namespace SharpCmd.ConcreteCommand.Recon
     /// <summary>
     /// https://github.com/airzero24/WMIReg/
     /// </summary>
-    internal partial class reg : IContract
+    internal partial class reg : ReconBase
     {
-        public string CommandName => "reg";
+        public override string CommandName => "reg";
 
-        public string Description => "Register Manager";
+        public override string Description => "Register Manager";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "reg";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             if (arguments.ContainsKey("/?"))
             {

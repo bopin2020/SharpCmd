@@ -6,13 +6,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.Misc
 {
-    internal class exit : IContract
+    internal class exit : MiscBase
     {
-        public string CommandName => "exit";
+        public override string CommandName => "exit";
 
-        public string Description => "exit process";
+        public override string Description => "exit process";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "exit";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             Environment.Exit(0);
         }

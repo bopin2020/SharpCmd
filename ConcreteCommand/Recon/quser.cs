@@ -10,28 +10,13 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal partial class quser : IContract
+    internal partial class quser : ReconBase
     {
-        public string CommandName => "quser";
+        public override string CommandName => "quser";
 
-        public string Description => "WTS query user login info";
+        public override string Description => "WTS query user login info";
 
-        /// <summary>
-        /// WTSEnumerateSessions
-        /// 
-        /// WinStationEnumerate --> 
-        /// </summary>
-        /// <param name="arguments"></param>
-        public void Execute(Dictionary<string, string> arguments)
-        {
-
-            string Server = "";
-            IntPtr hServer = IntPtr.Zero;
-            IntPtr sessionId = IntPtr.Zero;
-            int Count = 0;
-            if (arguments.ContainsKey("/?"))
-            {
-                string help = @"
+        public override string CommandHelp => @"
 QUERY USER [username | sessionname | sessionid] [/SERVER:servername]
 
   username            标识用户名。
@@ -39,9 +24,21 @@ QUERY USER [username | sessionname | sessionid] [/SERVER:servername]
   sessionid           用 ID sessionid 识别会话。
   /SERVER:servername  要查询的服务器(默认值是当前值)。
                 ";
-                Console.WriteLine(help);
-                return;
-            }
+
+        /// <summary>
+        /// WTSEnumerateSessions
+        /// 
+        /// WinStationEnumerate --> 
+        /// </summary>
+        /// <param name="arguments"></param>
+        public override void Execute(Dictionary<string, string> arguments)
+        {
+            if (base.HelpCheck(arguments)) return;
+
+            string Server = "";
+            IntPtr hServer = IntPtr.Zero;
+            IntPtr sessionId = IntPtr.Zero;
+            int Count = 0;
 
             if (arguments.ContainsKey("/server"))
             {

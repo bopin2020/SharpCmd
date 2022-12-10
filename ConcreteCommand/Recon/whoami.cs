@@ -22,13 +22,15 @@ namespace SharpCmd.ConcreteCommand.Recon
     /// sddl.h
     /// securitybase.h
     /// </summary>
-    internal partial class whoami : IContract
+    internal partial class whoami : ReconBase
     {
-        public string CommandName => "whoami";
+        public override string CommandName => "whoami";
 
-        public string Description => "show the current user sid,priv,groups informations";
+        public override string Description => "show the current user sid,priv,groups informations";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "whoami /user /priv /group /all";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             if (arguments.ContainsKey("/?"))
             {

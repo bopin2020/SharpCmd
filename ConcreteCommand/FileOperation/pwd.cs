@@ -7,13 +7,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.FileOperation
 {
-    internal class pwd : IContract
+    internal class pwd : FileOperationBase
     {
-        public string CommandName => "pwd";
+        public override string CommandName => "pwd";
 
-        public string Description => "print the current path";
+        public override string Description => "print the current path";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "pwd";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             Console.WriteLine(Directory.GetCurrentDirectory());
         }

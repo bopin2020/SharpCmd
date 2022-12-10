@@ -22,6 +22,7 @@ namespace SharpCmd
             foreach (var type in assembly.GetTypes())
             {
                 if (type.IsInterface) continue;
+                if (type.IsAbstract) continue;
                 if (typeof(IContract).IsAssignableFrom(type))
                 {
                     var con = Activator.CreateInstance(type) as IContract;

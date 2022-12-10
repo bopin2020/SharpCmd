@@ -9,13 +9,15 @@ using System.Xml.Linq;
 
 namespace SharpCmd.ConcreteCommand.FileOperation
 {
-    internal class type : IContract
+    internal class type : FileOperationBase
     {
-        public string CommandName => "type";
+        public override string CommandName => "type";
 
-        public string Description => "read text file";
+        public override string Description => "read text file";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "type c:\\3.txt";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             string filename = null;
             bool textfile = true;

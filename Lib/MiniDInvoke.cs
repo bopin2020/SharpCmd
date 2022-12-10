@@ -1,19 +1,64 @@
 ﻿using SharpCmd.Lib.Delegates;
+using SharpCmd.Lib.Help;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
+using System.Management;
 
 namespace SharpCmd.Lib
 {
+
+    internal sealed partial class MiniDInvoke
+    {
+        class HPInvokeTemplate
+        {
+            // 判断是.net35 还是.net40
+            public int CLRVersion { get; }
+            // 指定assembly 最好是已经加载进来的
+            public Assembly ThisAssembly { get; }
+            // 类的名称
+            public string ThisClass { get; }
+            // 方法的访问属性
+            public BindingFlags ThisMethod_AccessProperties { get; }
+            // GetProcAddress方法第一个参数的类型不一定总是 HandleRef
+            public bool ThisMethod_ArgsTypeIsHandleRef { get; }
+
+            public HPInvokeTemplate(int cLRVersion, Assembly thisAssembly, string thisClass, BindingFlags thisMethod_AccessProperties, bool thisMethod_ArgsTypeIsHandleRef)
+            {
+                CLRVersion = cLRVersion;
+                ThisAssembly = thisAssembly;
+                ThisClass = thisClass;
+                ThisMethod_AccessProperties = thisMethod_AccessProperties;
+                ThisMethod_ArgsTypeIsHandleRef = thisMethod_ArgsTypeIsHandleRef;
+            }
+        }
+
+        private static List<HPInvokeTemplate> templates = new List<HPInvokeTemplate>()
+        {
+#if NET35
+            new HPInvokeTemplate(2,AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name.StartsWith("System")).FirstOrDefault(),"Microsoft.Win32.UnsafeNativeMethods",BindingFlags.NonPublic | BindingFlags.Public,true),
+            new HPInvokeTemplate(2,Assembly.GetAssembly(typeof(System.Windows.Forms.MessageBox)),"System.Windows.Forms.UnsafeNativeMethods",BindingFlags.NonPublic | BindingFlags.Public,true),
+            new HPInvokeTemplate(2,Assembly.GetAssembly(typeof(System.Management.MethodData)),"System.Management.WmiNetUtilsHelper",BindingFlags.NonPublic | BindingFlags.Public,false),
+
+#elif NET40
+            new HPInvokeTemplate(4,Assembly.GetAssembly(typeof(object)),"Microsoft.Win32.Win32Native",BindingFlags.NonPublic,false),
+            new HPInvokeTemplate(4,Assembly.GetAssembly(typeof(System.Windows.Forms.MessageBox)),"System.Windows.Forms.UnsafeNativeMethods",BindingFlags.Public,true),
+            new HPInvokeTemplate(4,AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name.StartsWith("System")).FirstOrDefault(),"Microsoft.Win32.UnsafeNativeMethods",BindingFlags.Public,true),
+#endif
+        };
+    }
+
+
     /// <summary>
     /// Dynamic call win32 api using Reflection to hide ImplMapTable (pinvoke import table)
     /// </summary>
-    internal sealed class MiniDInvoke
+    internal sealed partial class MiniDInvoke
     {
-        #region Private Members
+#region Private Members
 
         enum SupportVersion
         {
@@ -27,15 +72,18 @@ namespace SharpCmd.Lib
 #elif NET40
         private static SupportVersion supportVersion = SupportVersion.NET40;
 
-#else   
+#else
         private static SupportVersion supportVersion = SupportVersion.NET40;
 #endif
+
+        // 这里通过索引切换要使用哪一套调用链
+        private const int net35 = 2;
+        private const int net40 = 2;
+
+
         private static BindingFlags bindingFlags = SetBindingFlags();
         private static string typeFullName = SetTypeFullName();
-        private static Assembly assembly = supportVersion == SupportVersion.NET40
-                                                        ? Assembly.GetAssembly(typeof(Object)) :
-                                                        (
-            AppDomain.CurrentDomain.GetAssemblies().Where(x => x.GetName().Name.StartsWith("System")).FirstOrDefault());
+        private static Assembly assembly = supportVersion == SupportVersion.NET40 ? templates[net40].ThisAssembly : templates[net35].ThisAssembly;
 
 
         private static Type type;
@@ -49,16 +97,16 @@ namespace SharpCmd.Lib
         public static Exception LastException { get; private set; }
 
 
-        #region Private Static Methods
+#region Private Static Methods
                 private static BindingFlags SetBindingFlags()
                 {
                     switch (supportVersion)
                     {
                         case SupportVersion.NET35:
-                            bindingFlags = BindingFlags.Public;
+                            bindingFlags = templates[net35].ThisMethod_AccessProperties;
                             break;
                         case SupportVersion.NET40:
-                            bindingFlags = BindingFlags.NonPublic;
+                            bindingFlags = templates[net40].ThisMethod_AccessProperties;
                             break;
                         default:
                             break;
@@ -71,11 +119,11 @@ namespace SharpCmd.Lib
                     switch (supportVersion)
                     {
                         case SupportVersion.NET35:
-                            typeFullName = "Microsoft.Win32.UnsafeNativeMethods";
+                            typeFullName = templates[net35].ThisClass;
                             break;
                         case SupportVersion.NET40:
-                            typeFullName = "Microsoft.Win32.Win32Native";
-                            break;
+                            typeFullName = templates[net40].ThisClass;
+                             break;
                         case SupportVersion.DOTNET:
                             typeFullName = "System.Runtime.InteropServices";
                             break;
@@ -84,16 +132,16 @@ namespace SharpCmd.Lib
                     }
                     return typeFullName;
                 }
-        #endregion
+#endregion
 
 
-        #region Public Static Methods
+#region Public Static Methods
 
                 public static IntPtr GetModuleHandle(string dllname, bool throwException = false)
                 {
                     return Entry(() =>
                     {
-        #if DOTNET
+#if DOTNET
                         if(NativeLibrary.TryLoad(dllname,out IntPtr handle))
                         {
                             return handle;
@@ -104,7 +152,7 @@ namespace SharpCmd.Lib
                         }
 
                 
-        #else
+#else
                         if (type == null)
                             type = assembly.GetType(typeFullName);
                         if (_GetModuleHandle == null)
@@ -114,11 +162,11 @@ namespace SharpCmd.Lib
                         if(module == IntPtr.Zero)
                         {
                             module = kernel32.LoadLibrary(dllname);
-                            Console.WriteLine(module);
+                            Console.WriteLine(Constant.InitDll + dllname + "\tat:" + module.ToString("x"));
+                            return module;
                         }
-                        return module;
                         return (IntPtr)_GetModuleHandle.Invoke(null, new object[] { dllname });
-        #endif
+#endif
                     },
                     throwException
                     );
@@ -178,17 +226,47 @@ namespace SharpCmd.Lib
                             throw new Exception(typeFullName + "was not found" + assembly.FullName);
                         }
                         if (_GetProcAddress == null)
-                            _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags);
+                        {
+#if NET40
+                            if (templates[net40].ThisMethod_ArgsTypeIsHandleRef)
+                            {
+                                _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags,null,new Type[] { typeof(HandleRef),typeof(string) },default);
+                            }
+                            else
+                            {
+                                _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags);
+                            }
+#endif
+                        }
 
 #if NET35
                         //  .NET3.5 GetProcAddress 第一个方法参数类型不是 IntPtr  而是HandleRef 结构体
-                        object arg1 = new HandleRef(null, dll);
+                        object arg1 = default;
+                        if (!templates[net35].ThisMethod_ArgsTypeIsHandleRef)
+                        {
+
+                            arg1 = dll;
+                        }
+                        else
+                        {
+                            arg1 = new HandleRef(null, dll);
+                        }
 
 #elif NET40
-                        IntPtr arg1 = dll;
-#endif
+                        object arg1 = default;
+                        if (!templates[net40].ThisMethod_ArgsTypeIsHandleRef)
+                        {
 
+                            arg1 = dll;
+
+                        }
+                        else
+                        {
+                            arg1 = new HandleRef(null, dll);
+                        }
+#endif
                         return (IntPtr)_GetProcAddress.Invoke(null, new object[] { arg1, functionname });
+
 #endif
                     },
                     throwException

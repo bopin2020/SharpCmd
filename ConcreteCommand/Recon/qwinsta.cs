@@ -9,18 +9,20 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal partial class qwinsta : IContract
+    internal partial class qwinsta : ReconBase
     {
-        public string CommandName => "qwinsta";
+        public override string CommandName => "qwinsta";
 
-        public string Description => "WinSta for sessions";
+        public override string Description => "WinSta for sessions";
+
+        public override string CommandHelp => "qwinsta";
 
         /// <summary>
         /// 
         /// WinStationOpenServer -> WinStationEnumerateProcesses --> WinStationEnumerateProcesses --> WinStationInformation
         /// </summary>
         /// <param name="arguments"></param>
-        public void Execute(Dictionary<string, string> arguments)
+        public override void Execute(Dictionary<string, string> arguments)
         {
             string Server = "";
             IntPtr hServer = IntPtr.Zero;

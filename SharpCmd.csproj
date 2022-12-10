@@ -6,6 +6,7 @@
     <Platforms>AnyCPU</Platforms>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Configurations>Debug;Release;NET40;NET35</Configurations>
   </PropertyGroup>
 
 <ItemGroup Condition=" '$(TargetFramework)' == 'net35' ">
@@ -54,5 +55,13 @@
   <ItemGroup>
     <None Remove="References\net35\System.Core.dll" />
     <None Remove="References\net40\System.Core.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ConcreteCommand\RegistryManage\" />
+    <Folder Include="ConcreteCommand\ServiceManage\" />
   </ItemGroup>
 </Project>

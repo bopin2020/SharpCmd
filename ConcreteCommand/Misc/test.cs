@@ -9,13 +9,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.Misc
 {
-    internal class test : IContract
+    internal class test : MiscBase
     {
-        public string CommandName => nameof(test);
+        public override string CommandName => nameof(test);
 
-        public string Description => "just for test";
+        public override string Description => "just for test";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "test";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             user32.MessageBox(IntPtr.Zero, "", "", 1);
 

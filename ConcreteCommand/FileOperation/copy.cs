@@ -7,13 +7,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.FileOperation
 {
-    internal class copy : IContract
+    internal class copy : FileOperationBase
     {
-        public string CommandName => "copy";
+        public override string CommandName => "copy";
 
-        public string Description => "copy file from a to b";
+        public override string Description => "copy file from a to b";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "copy c:\\1.txt c:\\2.txt";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             if(arguments.Count < 2)
             {

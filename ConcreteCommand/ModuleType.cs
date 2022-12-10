@@ -7,7 +7,7 @@ namespace SharpCmd.ConcreteCommand
 {
     /// <summary>
     /// As we all known,cmd.exe is a wrapper application,which communicated with condrv.sys that under kernel mode with io package
-    /// I want to re-implement these features with win32 api.Becauss cmd /c with args that's not opsec during red team evalutation
+    /// I want to re-implement these features with win32 api. Because cmd /c with args that's not opsec during red team evalutation
     /// </summary>
     internal enum ModuleType
     {
@@ -17,6 +17,11 @@ namespace SharpCmd.ConcreteCommand
         Recon,
         ServiceManage,
         RegistryManage,
-        ExecutePayload
+        ExecutePayload,
+        /// <summary>
+        /// some important commands
+        /// </summary>
+        Advanced,
+        Evasion
     }
 }

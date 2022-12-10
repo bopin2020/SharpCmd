@@ -7,14 +7,21 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.FileOperation
 {
-    internal class cd : IContract
+    internal class cd : FileOperationBase
     {
-        public string CommandName => "cd";
+        public override string CommandName => "cd";
 
-        public string Description => "change the current directory";
+        public override string Description => "change the current directory";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "cd c:\\windows";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
+            if(base.HelpCheck(arguments))
+            {
+                return;
+            }
+
             string newPath = null;
             try
             {

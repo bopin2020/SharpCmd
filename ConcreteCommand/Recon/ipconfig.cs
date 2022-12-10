@@ -7,13 +7,15 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.Recon
 {
-    internal class ipconfig : IContract
+    internal class ipconfig : ReconBase
     {
-        public string CommandName => "ipconfig";
+        public override string CommandName => "ipconfig";
 
-        public string Description => "print network information";
+        public override string Description => "print network information";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "ipconfig";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
             string hostname = Dns.GetHostName();
             foreach (IPAddress item in Dns.GetHostAddresses(hostname))

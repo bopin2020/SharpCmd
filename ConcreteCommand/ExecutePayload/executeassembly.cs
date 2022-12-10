@@ -7,23 +7,26 @@ using System.Text;
 
 namespace SharpCmd.ConcreteCommand.ExecutePayload
 {
-    internal class executeassembly : IContract
+    internal class executeassembly : ExecutePayloadBase
     {
-        public string CommandName => "execute-assembly";
+        public override string CommandName => "execute-assembly";
 
-        public string Description => "execute .net assembly exe and dll without patch amsi/etw";
+        public override string Description => "execute .net assembly exe and dll without patch amsi/etw";
 
-        public void Execute(Dictionary<string, string> arguments)
+        public override string CommandHelp => "execute-assembly [filename exe / dll]";
+
+        public override void Execute(Dictionary<string, string> arguments)
         {
-            if (arguments.ContainsKey("/?"))
+            if (base.HelpCheck(arguments))
             {
-                Console.WriteLine("execute-assembly [filename exe / dll]");
                 return;
             }
             string filename = null;
-            string[] args = null;
-            filename = arguments.Keys.ToArray()[1];
-            args = arguments.Keys.ToArray()[2].Split();
+            object[] args = null;
+            //filename = arguments.Keys.ToArray()[1];
+            filename = @"C:\Users\User\Desktop\DynamicPInvoke.exe";
+            //args = arguments.Keys.ToArray()[2].Split();
+            args = new object[] { new string[] { "" } };
             try
             {
                 Assembly.LoadFile(filename).EntryPoint.Invoke(null, args);
