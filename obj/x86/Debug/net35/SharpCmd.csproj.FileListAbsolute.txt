@@ -1,0 +1,13 @@
+D:\Code\CSharp\SharpCmd\bin\x86\Debug\net35\SharpCmd.exe.config
+D:\Code\CSharp\SharpCmd\bin\x86\Debug\net35\SharpCmd.exe
+D:\Code\CSharp\SharpCmd\bin\x86\Debug\net35\SharpCmd.pdb
+D:\Code\CSharp\SharpCmd\bin\x86\Debug\net35\System.Runtime.Serialization.dll
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.csproj.AssemblyReference.cache
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.csproj.SuggestedBindingRedirects.cache
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.GeneratedMSBuildEditorConfig.editorconfig
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.AssemblyInfoInputs.cache
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.AssemblyInfo.cs
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.csproj.CoreCompileInputs.cache
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.csproj.CopyComplete
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.exe
+D:\Code\CSharp\SharpCmd\obj\x86\Debug\net35\SharpCmd.pdb

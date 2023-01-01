@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpCmd.ConcreteCommand.Jobs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,9 +18,9 @@ namespace SharpCmd.Contract
         {
             observers.Remove(observer);
         }
-        public void Notify(Dictionary<string, string> arguments)
+        private void NotifyDefault(Dictionary<string, string> arguments)
         {
-            if(arguments.Keys.Select(x => String.Compare(x,"help",true) == 0).FirstOrDefault())
+            if (arguments.Keys.Select(x => String.Compare(x, "help", true) == 0).FirstOrDefault())
             {
                 Dictionary<string, StringBuilder> dict = new Dictionary<string, StringBuilder>();
                 foreach (var item in observers)
@@ -27,9 +28,9 @@ namespace SharpCmd.Contract
                     try
                     {
                         Contractbase contractbase = item as Contractbase;
-                        if(contractbase != null)
+                        if (contractbase != null)
                         {
-                            if(dict.ContainsKey(contractbase.ModuleName))
+                            if (dict.ContainsKey(contractbase.ModuleName))
                             {
                                 dict[contractbase.ModuleName].AppendLine(String.Format("\t{0,-20} {1,-20}", contractbase.CommandName, contractbase.Description));
                             }
@@ -37,7 +38,7 @@ namespace SharpCmd.Contract
                             {
                                 StringBuilder sb = new StringBuilder();
                                 sb.AppendLine(String.Format("\t{0,-20} {1,-20}", contractbase.CommandName, contractbase.Description));
-                                dict.Add(contractbase.ModuleName,sb);
+                                dict.Add(contractbase.ModuleName, sb);
                             }
                         }
                         else
@@ -57,11 +58,30 @@ namespace SharpCmd.Contract
                     Console.WriteLine(item.Value.ToString());
                 }
             }
+        }
+
+        public void Notify(Dictionary<string, string> arguments,JobItem jobItem)
+        {
+            NotifyDefault(arguments);
+            foreach (var item in observers)
+            {
+                if (item != null && arguments.Keys.ToArray()[0] == item.CommandName)
+                {
+                    item.ExecuteJob(arguments,jobItem);
+                    break;
+                }
+            }
+        }
+
+        public void Notify(Dictionary<string, string> arguments)
+        {
+            NotifyDefault(arguments);
             foreach (var item in observers)
             {
                 if (item != null && arguments.Keys.ToArray()[0] == item.CommandName)
                 {
                     item.Execute(arguments);
+                    break;
                 }
             }
         }

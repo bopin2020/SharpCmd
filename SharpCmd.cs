@@ -1,4 +1,5 @@
-﻿using SharpCmd.Contract;
+﻿using SharpCmd.ConcreteCommand.Jobs;
+using SharpCmd.Contract;
 using SharpCmd.Lib.ArgsParser;
 using SharpCmd.Lib.Help;
 using SharpCmd.Lib.Native;
@@ -16,6 +17,8 @@ namespace SharpCmd
         private List<IContract> contracts = new List<IContract>();
         private Command command;
 
+        private static SharpCmd sharpCmd;
+
         public SharpCmd(Command command)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -31,6 +34,7 @@ namespace SharpCmd
             }
 
             this.command = command;
+            sharpCmd = this;
         }
 
         public void Dispose()
@@ -86,5 +90,17 @@ namespace SharpCmd
             return result;
         }
 
+        public static void JobProxy(Dictionary<string,string> proxyArgs,JobItem jobItem)
+        {
+            try
+            {
+                sharpCmd.command.Notify(proxyArgs,jobItem);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("[Error]\t" + ex.Message);
+                Console.Error.WriteLine(ex.StackTrace);
+            }
+        }
     }
 }

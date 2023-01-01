@@ -22,6 +22,7 @@ namespace SharpCmd.ConcreteCommand
         /// some important commands
         /// </summary>
         Advanced,
-        Evasion
+        Evasion,
+        BackgroundJobs,
     }
 }
