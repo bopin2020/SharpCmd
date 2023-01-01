@@ -8,6 +8,7 @@
 >
 > 添加job 任务管理     参考Details.md
 >
+> 添加portscan命令 
 
 
 
