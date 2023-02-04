@@ -156,8 +156,8 @@ namespace SharpCmd.Lib
                         if (type == null)
                             type = assembly.GetType(typeFullName);
                         if (_GetModuleHandle == null)
-                            _GetModuleHandle = type.GetMethod("GetModuleHandle", BindingFlags.Static | bindingFlags);
-                        IntPtr module = (IntPtr)_GetModuleHandle.Invoke(null, new object[] { dllname });
+                            _GetModuleHandle = type.GetMethod(net35 == 2 ? "LoadLibrary" : "GetModuleHandle", BindingFlags.Static | bindingFlags);
+                        IntPtr module = (IntPtr)_GetModuleHandle?.Invoke(null, new object[] { dllname });
                         // try loadlibrary dll module
                         if(module == IntPtr.Zero)
                         {
@@ -231,6 +231,15 @@ namespace SharpCmd.Lib
                             if (templates[net40].ThisMethod_ArgsTypeIsHandleRef)
                             {
                                 _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags,null,new Type[] { typeof(HandleRef),typeof(string) },default);
+                            }
+                            else
+                            {
+                                _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags);
+                            }
+#else
+                            if (templates[net35].ThisMethod_ArgsTypeIsHandleRef)
+                            {
+                                _GetProcAddress = type.GetMethod("GetProcAddress", BindingFlags.Static | bindingFlags, null, new Type[] { typeof(HandleRef), typeof(string) }, default);
                             }
                             else
                             {

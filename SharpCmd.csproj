@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net35;</TargetFrameworks>
+    <TargetFrameworks>net35</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <Platforms>AnyCPU;x86</Platforms>
     <PlatformTarget>x64</PlatformTarget>
@@ -121,6 +121,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Details.assets\**" />
+    <EmbeddedResource Remove="Details.assets\**" />
+    <None Remove="Details.assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Details.md" />
     <None Remove="References\net35\System.Core.dll" />
     <None Remove="References\net40\System.Core.dll" />
   </ItemGroup>

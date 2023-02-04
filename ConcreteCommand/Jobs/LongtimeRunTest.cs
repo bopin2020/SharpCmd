@@ -26,7 +26,7 @@ namespace SharpCmd.ConcreteCommand.Jobs
                 try
                 {
                     Thread.Sleep(10 * 1000);
-                    throw new ArgumentException("argument exp");
+                    Console.WriteLine("longtime over");
                     if (completionCallback != null)
                     {
                         completionCallback.JobStatus = JobStatus.Completed;

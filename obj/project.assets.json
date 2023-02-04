@@ -2,14 +2,11 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v3.5": {},
-    ".NETFramework,Version=v3.5/win7-x64": {},
-    ".NETFramework,Version=v4.0": {},
-    ".NETFramework,Version=v4.0/win7-x64": {}
+    ".NETFramework,Version=v3.5/win7-x64": {}
   },
   "libraries": {},
   "projectFileDependencyGroups": {
-    ".NETFramework,Version=v3.5": [],
-    ".NETFramework,Version=v4.0": []
+    ".NETFramework,Version=v3.5": []
   },
   "packageFolders": {
     "C:\\Users\\Administrator\\.nuget\\packages\\": {},
@@ -34,8 +31,7 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net35",
-        "net40"
+        "net35"
       ],
       "sources": {
         "C:\\Program Files\\dotnet\\library-packs": {},
@@ -45,10 +41,6 @@
       "frameworks": {
         "net35": {
           "targetAlias": "net35",
-          "projectReferences": {}
-        },
-        "net40": {
-          "targetAlias": "net40",
           "projectReferences": {}
         }
       },
@@ -61,10 +53,6 @@
     "frameworks": {
       "net35": {
         "targetAlias": "net35",
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
-      },
-      "net40": {
-        "targetAlias": "net40",
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
       }
     },
